@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaSaveApp - Video & MP3 İndirici</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- SABİT REKLAM ALANI (ÜST BANNER) -->
+    <div class="banner-ad top-ad">
+        <span>Reklam Alanı (Google AdSense / AdMob Banner)</span>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1 class="logo">Media<span>Save</span></h1>
+            <p class="subtitle">Sosyal medya linkini yapıştır, anında MP3 veya MP4 olarak indir!</p>
+        </header>
+
+        <!-- BAĞLANTI GİRİŞ ALANI -->
+        <div class="search-box">
+            <input type="text" id="videoLink" placeholder="Video veya ses linkini buraya yapıştırın...">
+            <button id="btnFetch" onclick="startDownloadProcess()">Linki Çöz</button>
+        </div>
+
+        <!-- İNDİRME SEÇENEKLERİ (LİNK ÇÖZÜLDÜKTEN SONRA AÇILACAK) -->
+        <div id="downloadOptions" class="download-options hidden">
+            <h3>Medya Başarıyla Çözüldü!</h3>
+            <div class="button-group">
+                <button class="btn-download mp3" onclick="triggerAdAndDownload('mp3')">🎵 MP3 Olarak İndir (Ses)</button>
+                <button class="btn-download mp4" onclick="triggerAdAndDownload('mp4')">🎥 MP4 Olarak İndir (Video)</button>
+            </div>
+        </div>
+
+        <!-- UZUN REKLAM İLE EXTRA AVANTAJ (İSTEDİĞİNİZ ÖDÜLLÜ REKLAM KURGUSU) -->
+        <div class="extra-reward">
+            <p>Hızlı indirme sunucularını kullanmak ister misiniz?</p>
+            <button class="btn-reward" onclick="showRewardedAd()">⚡ Kısa Reklam İzle & Ultra Hızlı İndir</button>
+        </div>
+    </div>
+
+    <!-- SABİT REKLAM ALANI (ALT BANNER) -->
+    <div class="banner-ad bottom-ad">
+        <span>Reklam Alanı (Google AdSense / AdMob Banner)</span>
+    </div>
+
+    <script>
+        // İleride buraya indirme motorunun JavaScript kodlarını yazacağız.
+        function startDownloadProcess() {
+            let link = document.getElementById('videoLink').value;
+            if(link.trim() === "") {
+                alert("Lütfen geçerli bir link yapıştırın!");
+                return;
+            }
+            // Sahte bir yükleme simülasyonu (Linki çözüyor gibi yapıp seçenekleri açıyoruz)
+            document.getElementById('downloadOptions').classList.remove('hidden');
+        }
+
+        function triggerAdAndDownload(format) {
+            alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra " + format.toUpperCase() + indirmesi başlayacak.");
+            // Buraya gerçek reklam ve indirme kodları gelecek
+        }
+
+        function showRewardedAd() {
+            alert("Ödüllü Reklam Başlatıldı! 15 saniye sonra Ultra Hızlı İndirme Modu aktif olacak.");
+            // Buraya ödüllü reklam kodları gelecek
+        }
+    </script>
+</body>
+</html>
