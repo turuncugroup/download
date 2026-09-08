@@ -108,7 +108,7 @@
             <span>SOL DİKEY REKLAM (160x600)</span>
         </div>
 
-        <!-- ANA UYGULAMA PANELİ -->
+        <!-- ANA PANEL -->
         <div class="container">
             <header>
                 <h1 class="logo">Media<span>Save</span></h1>
@@ -163,7 +163,6 @@
 
             globalUserLink = link;
 
-            // Engelsiz yönlendirme köprüsü aktivasyonu
             setTimeout(() => {
                 document.getElementById('downloadOptions').classList.remove('hidden');
                 document.getElementById('rewardArea').classList.remove('hidden');
@@ -178,8 +177,10 @@
                 return;
             }
 
-            // Popunder reklam arka planda otomatik tetiklenecektir
-            let targetUrl = `https://cobalt.tools{globalUserLink}`;
+            // 👑 ENGELLERİ AŞAN DOĞRU COBALT URL ŞABLONU (URL ENCODE EDİLDİ)
+            let targetUrl = "https://cobalt.tools" + encodeURIComponent(globalUserLink);
+            
+            // Kullanıcıyı doğrudan çalışan indirme sayfasına yönlendirir
             window.open(targetUrl, '_blank');
         }
 
@@ -189,13 +190,13 @@
                 return;
             }
             
-            let premiumUrl = `https://cobalt.tools{globalUserLink}`;
+            let premiumUrl = "https://cobalt.tools" + encodeURIComponent(globalUserLink);
             window.open(premiumUrl, '_blank');
         }
     </script>
 
-    <!-- 👑 SİZİN ADSTERRA GERÇEK POPUNDER REKLAM KODUNUZ ENTEGRE EDİLDİ -->
-    <script src="https://pl31243946.profitableratecpmnetwork.com/18/56/38/185638de79851c7bdb871641b5c8bf90.js"></script>
+    <!-- SİZİN GERÇEK REKLAM KODUNUZ -->
+    <script src="https://profitableratecpmnetwork.com"></script>
 
 </body>
 </html>
