@@ -47,28 +47,42 @@
     </div>
 
     <script>
-        // RapidAPI Kimlik Bilgileri
+        // Genel İndirme Motoru Ayarları
 const apiKey = "4e0bbdca6amshf08532fa2517b64p114dc8jsnd374839d887a";
-const apiHost = "facebook-reel-and-video-downloader.p.rapidapi.com";
 
-let downloadedVideoUrl = "";
+let downloadedMp3Url = "";
+let downloadedMp4Url = "";
 
 async function startDownloadProcess() {
-    let link = document.getElementById('videoLink').value;
+    let link = document.getElementById('videoLink').value.trim();
     let fetchButton = document.getElementById('btnFetch');
     
-    if(link.trim() === "") {
-        alert("Lütfen geçerli bir bağlantı yapıştırın!");
+    if(link === "") {
+        alert("Lütfen geçerli bir sosyal medya (YouTube, Instagram, FB) linki yapıştırın!");
         return;
     }
 
-    // Arayüz kilitleme ve yükleniyor geri bildirimi
     fetchButton.innerText = "Bağlantı Çözülüyor...";
     fetchButton.disabled = true;
 
-    // CORS engellerini aşmak ve doğrudan API sunucusuna güvenli bağlanmak için tam adres
-    const url = `https://${apiHost}/app/main.php?url=${encodeURIComponent(link.trim())}`;
-    
+    // Linkin hangi platforma ait olduğunu otomatik algılayan dinamik API yönlendirici sistem
+    let apiHost = "";
+    let apiUrl = "";
+
+    if (link.includes("youtube.com") || link.includes("youtu.be")) {
+        // YouTube İndirme Alt Sunucusu
+        apiHost = "youtube-video-and-shorts-downloader1.p.rapidapi.com";
+        apiUrl = `https://${apiHost}/display?url=${encodeURIComponent(link)}`;
+    } else if (link.includes("instagram.com")) {
+        // Instagram İndirme Alt Sunucusu
+        apiHost = "instagram-downloader-download-instagram-videos-stories.p.rapidapi.com";
+        apiUrl = `https://${apiHost}/index?url=${encodeURIComponent(link)}`;
+    } else {
+        // Facebook ve Diğer Platformlar için Mevcut Sunucumuz
+        apiHost = "facebook-reel-and-video-downloader.p.rapidapi.com";
+        apiUrl = `https://${apiHost}/app/main.php?url=${encodeURIComponent(link)}`;
+    }
+
     const options = {
         method: 'GET',
         headers: {
@@ -78,58 +92,50 @@ async function startDownloadProcess() {
     };
 
     try {
-        const response = await fetch(url, options);
+        const response = await fetch(apiUrl, options);
         
         if (!response.ok) {
-            throw new Error(`Sunucu hatası: ${response.status}`);
+            throw new Error(`Sunucu yanıt vermedi: ${response.status}`);
         }
 
         const result = await response.json();
-        console.log("API Gelen Veri Yapısı:", result); // Hata ayıklama için konsola yazdırıyoruz
+        console.log("Gelen Medya Verisi:", result);
 
-        // API'nin dönebileceği tüm olası nesne isimlerini tek tek kontrol ediyoruz (Esnek Yapı)
-        if (result) {
-            downloadedVideoUrl = result.url || 
-                                 result.download_url || 
-                                 result.link || 
-                                 (result.links && result.links[0]) ||
-                                 (result.data && result.data.url) ||
-                                 result.result;
-        }
-        
-        // Eğer yukarıdaki taramalardan en az biri başarılı olduysa indirme butonunu aç
-        if (downloadedVideoUrl && downloadedVideoUrl.startsWith("http")) {
+        // Farklı sunuculardan gelen esnek veri formatlarını yakalayan gelişmiş filtreleme
+        downloadedMp4Url = result.url || result.download_url || result.link || (result.links && result.links[0]) || result.result;
+        downloadedMp3Url = result.mp3 || result.audio || result.audio_url || downloadedMp4Url; // MP3 yoksa videoya yönlendirir
+
+        if (downloadedMp4Url && downloadedMp4Url.startsWith("http")) {
+            // Başarılıysa indirme seçenekleri kartını ekranda göster
             document.getElementById('downloadOptions').classList.remove('hidden');
         } else {
-            // Eğer API hata mesajı döndüyse kullanıcıya göster
-            let errorMsg = result.message || result.error || "Video çözülemedi. Bağlantının herkese açık ve geçerli olduğundan emin olun.";
-            alert(errorMsg);
+            alert("Bağlantı analiz edilemedi. Lütfen linkin herkese açık ve doğru olduğundan emin olun.");
         }
 
     } catch (error) {
-        console.error("Hata Detayı:", error);
-        alert("Bağlantı kurulurken bir sorun oluştu. Lütfen tarayıcınızın konsol (F12) ekranındaki hatayı kontrol edin.");
+        console.error("Teknik Detay:", error);
+        alert("Bağlantı kurulurken teknik bir sorun oluştu. Bu platform için API paketiniz ücretsiz olarak güncelleniyor olabilir, lütfen az sonra tekrar deneyin.");
     } finally {
-        // Butonu eski haline getir
         fetchButton.innerText = "Linki Çöz";
         fetchButton.disabled = false;
     }
 }
 
 function triggerAdAndDownload(format) {
-    // Sektör standardı reklam kurgusu tetikleyicisi
-    alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra " + format.toUpperCase() + " indirme sekmesine yönlendirileceksiniz.");
+    // Para kazandıracak geçiş reklam kurgusu (Gelecekte buraya reklam scripti eklenecek)
+    alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra " + format.toUpperCase() + " indirme işleminiz başlayacaktır.");
     
-    if(downloadedVideoUrl) {
-        // İndirme bağlantısını güvenli bir şekilde yeni sekmede açar
-        window.open(downloadedVideoUrl, '_blank');
+    let targetUrl = (format === 'mp3') ? downloadedMp3Url : downloadedMp4Url;
+    
+    if(targetUrl) {
+        window.open(targetUrl, '_blank');
     } else {
-        alert("İndirme bağlantısı kayboldu, lütfen sayfayı yenileyip tekrar deneyin.");
+        alert("İndirme bağlantısı bulunamadı.");
     }
 }
 
 function showRewardedAd() {
-    alert("Ödüllü Reklam Başlatıldı! 15 saniye sonra yüksek hızlı premium sunucu aktif olacak.");
+    alert("Ödüllü Reklam Başlatıldı! 15 saniye sonra yüksek hızlı sunucu linkiniz aktif olacaktır.");
 }
 
     </script>
