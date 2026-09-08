@@ -23,7 +23,6 @@
             padding: 10px;
         }
 
-        /* TÜM SİTEYİ VE REKLAMLARI KAPLAYAN ANA DÜZEN */
         .main-wrapper {
             display: flex;
             align-items: center;
@@ -74,25 +73,22 @@
         .btn-reward { background-color: #eab308; color: #0f172a; padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; }
         .btn-reward:hover { background-color: #ca8a04; }
 
-        /* YATAY BANNER REKLAMLARI (ALT VE ÜST) */
         .banner-ad {
             width: 100%; max-width: 728px; height: 90px; background-color: #1e293b;
             border: 1px solid #334155; display: flex; align-items: center; justify-content: center;
-            color: #64748b; font-size: 0.85rem; border-radius: 8px; margin: 10px 0;
+            color: #64748b; font-size: 0.85rem; border-radius: 8px; margin: 10px 0; overflow: hidden;
         }
 
-        /* 👑 YENİ EKLEDİĞİMİZ DİKEY YAN REKLAMLAR (SKYSCRAPER) */
         .side-ad {
             width: 160px; height: 600px; background-color: #1e293b;
             border: 1px solid #334155; display: flex; align-items: center; justify-content: center;
-            color: #64748b; font-size: 0.85rem; border-radius: 8px; text-align: center; padding: 10px;
+            color: #64748b; font-size: 0.85rem; border-radius: 8px; text-align: center; padding: 10px; overflow: hidden;
         }
 
         .hidden { display: none; }
 
-        /* TELEFONLAR İÇİN TASARIM DÜZENLEMESİ (MOBİLDE YAN REKLAMLARI GİZLER) */
         @media (max-width: 900px) {
-            .side-ad { display: none; } /* Ekran daralınca yan reklamlar kaybolur, tasarım bozulmaz */
+            .side-ad { display: none; }
             .button-group { flex-direction: column; }
             .banner-ad { height: 60px; font-size: 0.75rem; }
         }
@@ -100,20 +96,19 @@
 </head>
 <body>
 
-    <!-- SABİT ÜST REKLAM -->
+    <!-- REKLAM: ÜST BANNER -->
     <div class="banner-ad top-ad">
-        <span>ÜST BANNER REKLAM ALANI (728x90)</span>
+        <div id="ad-top-slot">Reklam Yükleniyor...</div>
     </div>
 
-    <!-- REKLAMLAR VE GÖVDEYİ BİRLEŞTİREN ANA SARICI -->
     <div class="main-wrapper">
         
-        <!-- SOL REKLAM SÜTUNU -->
+        <!-- REKLAM: SOL DİKEY -->
         <div class="side-ad left-ad">
-            <span>SOL DİKEY REKLAM (160x600)</span>
+            <div id="ad-left-slot">SOL REKLAM</div>
         </div>
 
-        <!-- UYGULAMA PANELİ (ORTA GÖVDE) -->
+        <!-- ANA PANEL -->
         <div class="container">
             <header>
                 <h1 class="logo">Media<span>Save</span></h1>
@@ -121,7 +116,7 @@
             </header>
 
             <div class="search-box">
-                <input type="text" id="videoLink" placeholder="YouTube, TikTok, Instagram veya Facebook linkini yapıştırın...">
+                <input type="text" id="videoLink" placeholder="YouTube, TikTok, Instagram veya FB linkini yapıştırın...">
                 <button id="btnFetch" onclick="startDownloadProcess()">Linki Çöz</button>
             </div>
 
@@ -139,22 +134,24 @@
             </div>
         </div>
 
-        <!-- SAĞ REKLAM SÜTUNU -->
+        <!-- REKLAM: SAĞ DİKEY -->
         <div class="side-ad right-ad">
-            <span>SAĞ DİKEY REKLAM (160x600)</span>
+            <div id="ad-right-slot">SAĞ REKLAM</div>
         </div>
 
     </div>
 
-    <!-- SABİT ALT REKLAM -->
+    <!-- REKLAM: ALT BANNER -->
     <div class="banner-ad bottom-ad">
-        <span>ALT BANNER REKLAM ALANI (728x90)</span>
+        <div id="ad-bottom-slot">Reklam Yükleniyor...</div>
     </div>
 
     <script>
-        let globalUserLink = "";
+        let downloadedMp3Url = "";
+        let downloadedMp4Url = "";
 
-        function startDownloadProcess() {
+        // Tarayıcı güvenlik duvarlarını aşan açık ve güncel No-CORS proxy indirme motoru [1]
+        async function startDownloadProcess() {
             let link = document.getElementById('videoLink').value.trim();
             let fetchButton = document.getElementById('btnFetch');
             
@@ -163,31 +160,74 @@
                 return;
             }
 
-            fetchButton.innerText = "Kontrol Ediliyor...";
+            fetchButton.innerText = "Bağlantı Çözülüyor...";
             fetchButton.disabled = true;
+            document.getElementById('downloadOptions').classList.add('hidden');
 
-            globalUserLink = link;
+            // CORS engeli olmayan küresel indirme köprüsü
+            const proxyUrl = "https://corsproxy.io?" + encodeURIComponent("https://cobalt.tools");
+            
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: link,
+                    vQuality: "max",
+                    filenamePattern: "classic"
+                })
+            };
 
-            setTimeout(() => {
-                document.getElementById('downloadOptions').classList.remove('hidden');
+            try {
+                const response = await fetch(proxyUrl, options);
+                const result = await response.json();
+
+                if (result && result.url) {
+                    downloadedMp4Url = result.url;
+                    downloadedMp3Url = result.url; 
+                    
+                    // İndirme butonlarını hatasız göster
+                    document.getElementById('downloadOptions').classList.remove('hidden');
+                } else if (result && result.text) {
+                    alert("Hata: " + result.text);
+                } else {
+                    alert("Bağlantı şu anda çözülemedi, lütfen linki kontrol edin.");
+                }
+
+            } catch (error) {
+                console.error("Teknik Hata:", error);
+                alert("İndirme tüneli meşgul. Lütfen 2 saniye sonra tekrar 'Linki Çöz' butonuna basın.");
+            } finally {
                 fetchButton.innerText = "Linki Çöz";
                 fetchButton.disabled = false;
-            }, 800);
+            }
         }
 
         function triggerAdAndDownload(format) {
-            if(!globalUserLink) {
-                alert("Lütfen önce bir link çözün!");
-                return;
+            // Sektör standardı Popunder (Arkada açılan reklam) tetikleme alanı
+            // Aşağıdaki bölüme Adsterra'dan alacağımız kod entegre edilecek
+            alert("İndirme işlemi başlatılıyor! Lütfen açılan indirme sekmesini kapatmayın.");
+            
+            let targetUrl = (format === 'mp3') ? downloadedMp3Url : downloadedMp4Url;
+            
+            if(targetUrl) {
+                // Dosyayı tarayıcı engeline takılmadan doğrudan indirtme komutu
+                const downloader = document.createElement('a');
+                downloader.href = targetUrl;
+                downloader.target = '_blank';
+                downloader.download = format === 'mp3' ? 'audio.mp3' : 'video.mp4';
+                document.body.appendChild(downloader);
+                downloader.click();
+                document.body.removeChild(downloader);
+            } else {
+                alert("İndirme bağlantısı bulunamadı.");
             }
-
-            alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra indirme penceresi açılacaktır.");
-            let targetUrl = `https://cobalt.tools{globalUserLink}`;
-            window.open(targetUrl, '_blank');
         }
 
         function showRewardedAd() {
-            alert("Ödüllü Reklam Başlatıldı! 15 saniye reklam izledikten sonra yüksek hızlı sunucu aktif olacaktır.");
+            alert("Ödüllü Reklam Başlatıldı! 15 saniye sonra yüksek hızlı sunucu aktif olacaktır.");
         }
     </script>
 </body>
