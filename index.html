@@ -4,46 +4,151 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediaSaveApp - Video & MP3 İndirici</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        /* TÜM SİTEYİ VE REKLAMLARI KAPLAYAN ANA DÜZEN */
+        .main-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            gap: 20px;
+            margin: auto;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #334155;
+            z-index: 2;
+        }
+
+        header { margin-bottom: 30px; }
+        .logo { font-size: 2.5rem; font-weight: 800; letter-spacing: 1px; }
+        .logo span { color: #38bdf8; text-shadow: 0 0 15px rgba(56, 189, 248, 0.6); }
+        .subtitle { color: #94a3b8; margin-top: 10px; font-size: 0.95rem; }
+
+        .search-box { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+        input[type="text"] {
+            width: 100%; padding: 15px; border-radius: 8px; border: 2px solid #334155;
+            background-color: #0f172a; color: #fff; font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        input[type="text"]:focus { border-color: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+
+        button { cursor: pointer; font-weight: 600; transition: 0.3s; border: none; }
+        #btnFetch { background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; padding: 15px; border-radius: 8px; font-size: 1.1rem; }
+        #btnFetch:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4); }
+
+        .download-options { background: #0f172a; padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px dashed #38bdf8; }
+        .download-options h3 { font-size: 1.1rem; margin-bottom: 15px; color: #38bdf8; }
+        .button-group { display: flex; gap: 10px; }
+        .btn-download { flex: 1; padding: 12px; border-radius: 8px; color: white; font-size: 0.95rem; }
+        .mp3 { background-color: #10b981; } .mp3:hover { background-color: #059669; }
+        .mp4 { background-color: #f43f5e; } .mp4:hover { background-color: #e11d48; }
+
+        .extra-reward { margin-top: 20px; padding-top: 20px; border-top: 1px solid #334155; }
+        .extra-reward p { font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px; }
+        .btn-reward { background-color: #eab308; color: #0f172a; padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; }
+        .btn-reward:hover { background-color: #ca8a04; }
+
+        /* YATAY BANNER REKLAMLARI (ALT VE ÜST) */
+        .banner-ad {
+            width: 100%; max-width: 728px; height: 90px; background-color: #1e293b;
+            border: 1px solid #334155; display: flex; align-items: center; justify-content: center;
+            color: #64748b; font-size: 0.85rem; border-radius: 8px; margin: 10px 0;
+        }
+
+        /* 👑 YENİ EKLEDİĞİMİZ DİKEY YAN REKLAMLAR (SKYSCRAPER) */
+        .side-ad {
+            width: 160px; height: 600px; background-color: #1e293b;
+            border: 1px solid #334155; display: flex; align-items: center; justify-content: center;
+            color: #64748b; font-size: 0.85rem; border-radius: 8px; text-align: center; padding: 10px;
+        }
+
+        .hidden { display: none; }
+
+        /* TELEFONLAR İÇİN TASARIM DÜZENLEMESİ (MOBİLDE YAN REKLAMLARI GİZLER) */
+        @media (max-width: 900px) {
+            .side-ad { display: none; } /* Ekran daralınca yan reklamlar kaybolur, tasarım bozulmaz */
+            .button-group { flex-direction: column; }
+            .banner-ad { height: 60px; font-size: 0.75rem; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- SABİT REKLAM ALANI (ÜST BANNER) -->
+    <!-- SABİT ÜST REKLAM -->
     <div class="banner-ad top-ad">
-        <span>Reklam Alanı (Google AdSense Banner)</span>
+        <span>ÜST BANNER REKLAM ALANI (728x90)</span>
     </div>
 
-    <div class="container">
-        <header>
-            <h1 class="logo">Media<span>Save</span></h1>
-            <p class="subtitle">Sosyal medya linkini yapıştır, anında MP3 veya MP4 olarak indir!</p>
-        </header>
-
-        <!-- BAĞLANTI GİRİŞ ALANI -->
-        <div class="search-box">
-            <input type="text" id="videoLink" placeholder="YouTube, TikTok, Instagram veya Facebook linkini yapıştırın...">
-            <button id="btnFetch" onclick="startDownloadProcess()">Linki Çöz</button>
+    <!-- REKLAMLAR VE GÖVDEYİ BİRLEŞTİREN ANA SARICI -->
+    <div class="main-wrapper">
+        
+        <!-- SOL REKLAM SÜTUNU -->
+        <div class="side-ad left-ad">
+            <span>SOL DİKEY REKLAM (160x600)</span>
         </div>
 
-        <!-- İNDİRME SEÇENEKLERİ (LİNK KONTROL EDİLDİKTEN SONRA AÇILIR) -->
-        <div id="downloadOptions" class="download-options hidden">
-            <h3>Medya İndirmeye Hazır!</h3>
-            <div class="button-group">
-                <button class="btn-download mp3" onclick="triggerAdAndDownload('mp3')">🎵 MP3 Olarak İndir (Ses)</button>
-                <button class="btn-download mp4" onclick="triggerAdAndDownload('mp4')">🎥 MP4 Olarak İndir (Video)</button>
+        <!-- UYGULAMA PANELİ (ORTA GÖVDE) -->
+        <div class="container">
+            <header>
+                <h1 class="logo">Media<span>Save</span></h1>
+                <p class="subtitle">Sosyal medya linkini yapıştır, anında MP3 veya MP4 olarak indir!</p>
+            </header>
+
+            <div class="search-box">
+                <input type="text" id="videoLink" placeholder="YouTube, TikTok, Instagram veya Facebook linkini yapıştırın...">
+                <button id="btnFetch" onclick="startDownloadProcess()">Linki Çöz</button>
+            </div>
+
+            <div id="downloadOptions" class="download-options hidden">
+                <h3>Medya İndirmeye Hazır!</h3>
+                <div class="button-group">
+                    <button class="btn-download mp3" onclick="triggerAdAndDownload('mp3')">🎵 MP3 Olarak İndir (Ses)</button>
+                    <button class="btn-download mp4" onclick="triggerAdAndDownload('mp4')">🎥 MP4 Olarak İndir (Video)</button>
+                </div>
+            </div>
+
+            <div class="extra-reward">
+                <p>Hızlı indirme sunucularını kullanmak ister misiniz?</p>
+                <button class="btn-reward" onclick="showRewardedAd()">⚡ Kısa Reklam İzle & Ultra Hızlı İndir</button>
             </div>
         </div>
 
-        <!-- UZUN REKLAM İLE EXTRA AVANTAJ (ÖDÜLLÜ REKLAM KURGUSU) -->
-        <div class="extra-reward">
-            <p>Hızlı indirme sunucularını kullanmak ister misiniz?</p>
-            <button class="btn-reward" onclick="showRewardedAd()">⚡ Kısa Reklam İzle & Ultra Hızlı İndir</button>
+        <!-- SAĞ REKLAM SÜTUNU -->
+        <div class="side-ad right-ad">
+            <span>SAĞ DİKEY REKLAM (160x600)</span>
         </div>
+
     </div>
 
-    <!-- SABİT REKLAM ALANI (ALT BANNER) -->
+    <!-- SABİT ALT REKLAM -->
     <div class="banner-ad bottom-ad">
-        <span>Reklam Alanı (Google AdSense Banner)</span>
+        <span>ALT BANNER REKLAM ALANI (728x90)</span>
     </div>
 
     <script>
@@ -61,14 +166,13 @@
             fetchButton.innerText = "Kontrol Ediliyor...";
             fetchButton.disabled = true;
 
-            // Linki hafızaya alıp tarayıcı engellerini aşarak doğrudan indirme butonlarını açıyoruz
             globalUserLink = link;
 
             setTimeout(() => {
                 document.getElementById('downloadOptions').classList.remove('hidden');
                 fetchButton.innerText = "Linki Çöz";
                 fetchButton.disabled = false;
-            }, 800); // Kullanıcıya işlem yapılıyor hissi veren akıcı gecikme
+            }, 800);
         }
 
         function triggerAdAndDownload(format) {
@@ -77,21 +181,8 @@
                 return;
             }
 
-            // Sizin istediğiniz para kazandıracak geçiş reklam kurgusu tetikleyicisi
             alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra indirme penceresi açılacaktır.");
-            
-            // Dünya genelinde tarayıcı engeli olmayan evrensel yönlendirme köprüsü
-            let targetUrl = "";
-            
-            if(format === 'mp3') {
-                // Sesi ayıklayarak fırlatan köprü
-                targetUrl = `https://cobalt.tools{globalUserLink}`;
-            } else {
-                // Videoyu doğrudan fırlatan köprü
-                targetUrl = `https://cobalt.tools{globalUserLink}`;
-            }
-            
-            // Yeni sekmede engelsiz açma komutu
+            let targetUrl = `https://cobalt.tools{globalUserLink}`;
             window.open(targetUrl, '_blank');
         }
 
