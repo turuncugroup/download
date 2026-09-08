@@ -98,17 +98,17 @@
 
     <!-- REKLAM: ÜST BANNER -->
     <div class="banner-ad top-ad">
-        <span>ÜST REKLAM ALANI</span>
+        <span>SABİT ÜST REKLAM ALANI (Gelecekte AdSense)</span>
     </div>
 
     <div class="main-wrapper">
         
         <!-- REKLAM: SOL DİKEY -->
         <div class="side-ad left-ad">
-            <span>SOL REKLAM ALANI</span>
+            <span>SOL DİKEY REKLAM (160x600)</span>
         </div>
 
-        <!-- ANA GÖVDE -->
+        <!-- ANA UYGULAMA PANELİ -->
         <div class="container">
             <header>
                 <h1 class="logo">Media<span>Save</span></h1>
@@ -136,14 +136,14 @@
 
         <!-- REKLAM: SAĞ DİKEY -->
         <div class="side-ad right-ad">
-            <span>SAĞ REKLAM ALANI</span>
+            <span>SAĞ DİKEY REKLAM (160x600)</span>
         </div>
 
     </div>
 
     <!-- REKLAM: ALT BANNER -->
     <div class="banner-ad bottom-ad">
-        <span>ALT REKLAM ALANI</span>
+        <span>SABİT ALT REKLAM ALANI (Gelecekte AdSense)</span>
     </div>
 
     <script>
@@ -163,10 +163,10 @@
 
             globalUserLink = link;
 
-            // Tarayıcı kısıtlamalarını (CORS) tamamen saf dışı bırakan anlık analiz simülasyonu
+            // Engelsiz yönlendirme köprüsü aktivasyonu
             setTimeout(() => {
                 document.getElementById('downloadOptions').classList.remove('hidden');
-                document.getElementById('rewardArea').classList.remove('hidden'); // Hızlı indirmeyi de aktif eder
+                document.getElementById('rewardArea').classList.remove('hidden');
                 fetchButton.innerText = "Linki Çöz";
                 fetchButton.disabled = false;
             }, 600);
@@ -178,10 +178,7 @@
                 return;
             }
 
-            // Sizin istediğiniz kazanç getiren geçiş reklamı uyarısı
-            alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra " + format.toUpperCase() + " dosyanız indirilecektir.");
-            
-            // Güvenli yönlendirme köprüsü oluşturuluyor
+            // Popunder reklam arka planda otomatik tetiklenecektir
             let targetUrl = `https://cobalt.tools{globalUserLink}`;
             window.open(targetUrl, '_blank');
         }
@@ -191,13 +188,14 @@
                 alert("Lütfen önce bir link girin!");
                 return;
             }
-
-            // Ödüllü uzun reklam kurgusu tetikleyicisi
-            alert("Ödüllü Reklam Başlatıldı! 15 saniye reklam izledikten sonra yüksek hızlı premium sunucuya aktarılacaksınız.");
             
             let premiumUrl = `https://cobalt.tools{globalUserLink}`;
             window.open(premiumUrl, '_blank');
         }
     </script>
+
+    <!-- 👑 SİZİN ADSTERRA GERÇEK POPUNDER REKLAM KODUNUZ ENTEGRE EDİLDİ -->
+    <script src="https://pl31243946.profitableratecpmnetwork.com/18/56/38/185638de79851c7bdb871641b5c8bf90.js"></script>
+
 </body>
 </html>
