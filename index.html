@@ -47,74 +47,91 @@
     </div>
 
     <script>
-        // Sizin ekran görüntünüzden çıkardığımız gerçek RapidAPI anahtarları entegre edildi
-        const apiKey = "4e0bbdca6amshf08532fa2517b64p114dc8jsnd374839d887a";
-        const apiHost = "://rapidapi.com";
+        // RapidAPI Kimlik Bilgileri
+const apiKey = "4e0bbdca6amshf08532fa2517b64p114dc8jsnd374839d887a";
+const apiHost = "facebook-reel-and-video-downloader.p.rapidapi.com";
+
+let downloadedVideoUrl = "";
+
+async function startDownloadProcess() {
+    let link = document.getElementById('videoLink').value;
+    let fetchButton = document.getElementById('btnFetch');
+    
+    if(link.trim() === "") {
+        alert("Lütfen geçerli bir bağlantı yapıştırın!");
+        return;
+    }
+
+    // Arayüz kilitleme ve yükleniyor geri bildirimi
+    fetchButton.innerText = "Bağlantı Çözülüyor...";
+    fetchButton.disabled = true;
+
+    // CORS engellerini aşmak ve doğrudan API sunucusuna güvenli bağlanmak için tam adres
+    const url = `https://${apiHost}/app/main.php?url=${encodeURIComponent(link.trim())}`;
+    
+    const options = {
+        method: 'GET',
+        headers: {
+            'x-rapidapi-key': apiKey,
+            'x-rapidapi-host': apiHost
+        }
+    };
+
+    try {
+        const response = await fetch(url, options);
         
-        let downloadedVideoUrl = "";
-
-        async function startDownloadProcess() {
-            let link = document.getElementById('videoLink').value;
-            let fetchButton = document.getElementById('btnFetch');
-            
-            if(link.trim() === "") {
-                alert("Lütfen geçerli bir bağlantı yapıştırın!");
-                return;
-            }
-
-            // Arayüz geri bildirimi
-            fetchButton.innerText = "Bağlantı Çözülüyor...";
-            fetchButton.disabled = true;
-
-            // API uç noktası (Endpoint) tanımı
-            const url = `https://${apiHost}/app/main.php?url=${encodeURIComponent(link)}`;
-            
-            const options = {
-                method: 'GET',
-                headers: {
-                    'x-rapidapi-key': apiKey,
-                    'x-rapidapi-host': apiHost
-                }
-            };
-
-            try {
-                const response = await fetch(url, options);
-                const result = await response.json();
-                
-                // API'den gelen yanıta göre indirme linkini yakalıyoruz
-                if (result && (result.url || result.download_url || result.link)) {
-                    downloadedVideoUrl = result.url || result.download_url || result.link;
-                    
-                    // Gizli olan indirme seçenekleri alanını görünür yapıyoruz
-                    document.getElementById('downloadOptions').classList.remove('hidden');
-                } else {
-                    alert("Video çözülemedi. Lütfen herkese açık geçerli bir video linki girdiğinizden emin olun.");
-                }
-            } catch (error) {
-                console.error(error);
-                alert("Bağlantı kurulurken teknik bir sorun oluştu. Lütfen tekrar deneyin.");
-            } finally {
-                fetchButton.innerText = "Linki Çöz";
-                fetchButton.disabled = false;
-            }
+        if (!response.ok) {
+            throw new Error(`Sunucu hatası: ${response.status}`);
         }
 
-        function triggerAdAndDownload(format) {
-            // İleride buraya gerçek reklam kodları (AdSense/AdMob scriptleri) yerleşecek
-            alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra " + format.toUpperCase() + " indirmesi başlayacak.");
-            
-            if(downloadedVideoUrl) {
-                // İndirme linkini yeni sekmede güvenli bir şekilde başlatır
-                window.open(downloadedVideoUrl, '_blank');
-            } else {
-                alert("İndirme bağlantısı bulunamadı, lütfen linki tekrar çözmeyi deneyin.");
-            }
+        const result = await response.json();
+        console.log("API Gelen Veri Yapısı:", result); // Hata ayıklama için konsola yazdırıyoruz
+
+        // API'nin dönebileceği tüm olası nesne isimlerini tek tek kontrol ediyoruz (Esnek Yapı)
+        if (result) {
+            downloadedVideoUrl = result.url || 
+                                 result.download_url || 
+                                 result.link || 
+                                 (result.links && result.links[0]) ||
+                                 (result.data && result.data.url) ||
+                                 result.result;
+        }
+        
+        // Eğer yukarıdaki taramalardan en az biri başarılı olduysa indirme butonunu aç
+        if (downloadedVideoUrl && downloadedVideoUrl.startsWith("http")) {
+            document.getElementById('downloadOptions').classList.remove('hidden');
+        } else {
+            // Eğer API hata mesajı döndüyse kullanıcıya göster
+            let errorMsg = result.message || result.error || "Video çözülemedi. Bağlantının herkese açık ve geçerli olduğundan emin olun.";
+            alert(errorMsg);
         }
 
-        function showRewardedAd() {
-            alert("Ödüllü Reklam Başlatıldı! 15 saniye sonra Ultra Hızlı İndirme Modu aktif olacak.");
-            // Ödüllü reklam tamamlandığında tetiklenecek fonksiyonlar buraya gelecek
-        }
+    } catch (error) {
+        console.error("Hata Detayı:", error);
+        alert("Bağlantı kurulurken bir sorun oluştu. Lütfen tarayıcınızın konsol (F12) ekranındaki hatayı kontrol edin.");
+    } finally {
+        // Butonu eski haline getir
+        fetchButton.innerText = "Linki Çöz";
+        fetchButton.disabled = false;
+    }
+}
+
+function triggerAdAndDownload(format) {
+    // Sektör standardı reklam kurgusu tetikleyicisi
+    alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra " + format.toUpperCase() + " indirme sekmesine yönlendirileceksiniz.");
+    
+    if(downloadedVideoUrl) {
+        // İndirme bağlantısını güvenli bir şekilde yeni sekmede açar
+        window.open(downloadedVideoUrl, '_blank');
+    } else {
+        alert("İndirme bağlantısı kayboldu, lütfen sayfayı yenileyip tekrar deneyin.");
+    }
+}
+
+function showRewardedAd() {
+    alert("Ödüllü Reklam Başlatıldı! 15 saniye sonra yüksek hızlı premium sunucu aktif olacak.");
+}
+
     </script>
 </body>
 </html>
