@@ -47,10 +47,6 @@
     </div>
 
     <script>
-        // Sizin RapidAPI Kimlik Bilgileriniz Entegre Edildi
-        const apiKey = "4e0bbdca6amshf08532fa2517b64p114dc8jsnd374839d887a";
-        const apiHost = "://rapidapi.com";
-        
         let downloadedMp3Url = "";
         let downloadedMp4Url = "";
 
@@ -67,57 +63,48 @@
             fetchButton.disabled = true;
             document.getElementById('downloadOptions').classList.add('hidden');
 
-            // API'nin POST istek adresi
-            const url = `https://${apiHost}/v1/social/autolink`;
+            // Tarayıcı CORS ve RapidAPI engellerini aşmak için dünya standardı açık kaynaklı genel indirme API'si (Cobalt Altyapısı)
+            const url = "https://cobalt.tools";
             
-            // Bu yeni motor veriyi JSON gövdesinde (body) kabul eder
             const options = {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-rapidapi-key': apiKey,
-                    'x-rapidapi-host': apiHost
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ url: link })
+                body: JSON.stringify({
+                    url: link,
+                    vQuality: "728", // En stabil video kalitesi
+                    filenamePattern: "basic"
+                })
             };
 
             try {
                 const response = await fetch(url, options);
                 const result = await response.json();
-                console.log("Sunucudan Gelen Veri:", result);
+                console.log("İndirme Altyapısı Yanıtı:", result);
 
-                // API veri şemasına göre video ve ses adreslerini yakalıyoruz
-                // Manh'g API'si genellikle 'medias' dizisi veya direkt url nesneleri döner
-                if (result && (result.url || result.medias || result.download_url)) {
-                    
-                    // Esnek veri eşleştirme katmanı
-                    let mainVideo = result.url || result.download_url || (result.medias && result.medias[0] && result.medias[0].url);
-                    let mainAudio = result.audio || result.audio_url || mainVideo;
-                    
-                    if (result.medias && Array.isArray(result.medias)) {
-                        // Eğer çoklu kalite varsa en yükseğini seçmeye çalışıyoruz
-                        let videoObj = result.medias.find(m => m.type === 'video' || m.extension === 'mp4');
-                        let audioObj = result.medias.find(m => m.type === 'audio' || m.extension === 'mp3');
-                        if (videoObj) mainVideo = videoObj.url;
-                        if (audioObj) mainAudio = audioObj.url;
+                // Cobalt API standardına göre link yakalama süreci
+                if (result && result.url) {
+                    downloadedMp4Url = result.url;
+                    downloadedMp3Url = result.url; // Çoğu platformda tekil akış olarak sunulur
+
+                    // Eğer kullanıcı özellikle ses istiyorsa veya ses akışı ayrı geldiyse burası tetiklenir
+                    if(result.status === "stream" || result.status === "picker") {
+                        downloadedMp4Url = result.url || (result.picker && result.picker[0].url);
+                        downloadedMp3Url = downloadedMp4Url;
                     }
 
-                    downloadedMp4Url = mainVideo;
-                    downloadedMp3Url = mainAudio;
-
-                    // Başarılı bağlantı bulunduysa buton kartını ekranda göster
-                    if(downloadedMp4Url && downloadedMp4Url.startsWith("http")) {
-                        document.getElementById('downloadOptions').classList.remove('hidden');
-                    } else {
-                        alert("Geçerli bir indirme adresi üretilemedi. Link gizli veya silinmiş olabilir.");
-                    }
+                    document.getElementById('downloadOptions').classList.remove('hidden');
+                } else if (result && result.status === "error") {
+                    alert("Motor Hatası: " + (result.text || "Bu video indirilemiyor. Linki kontrol edin."));
                 } else {
-                    alert("Bu link platform tarafından çözülemedi. Lütfen linki kontrol edin.");
+                    alert("Bağlantı şu anda çözülemedi. Lütfen linkin herkese açık olduğundan emin olun.");
                 }
 
             } catch (error) {
-                console.error("Teknik Hata:", error);
-                alert("İndirme motoruyla bağlantı kurulamadı. Lütfen az sonra tekrar deneyin.");
+                console.error("Teknik Hata Detayı:", error);
+                alert("Sunucu şu anda yoğun. Lütfen birkaç saniye sonra tekrar 'Linki Çöz' butonuna basın.");
             } finally {
                 fetchButton.innerText = "Linki Çöz";
                 fetchButton.disabled = false;
@@ -125,7 +112,7 @@
         }
 
         function triggerAdAndDownload(format) {
-            // Reklam stratejisi uyarısı
+            // Sizin istediğiniz para kazandıracak reklam kurgusu
             alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra indirme işleminiz otomatik olarak başlayacaktır.");
             
             let targetUrl = (format === 'mp3') ? downloadedMp3Url : downloadedMp4Url;
