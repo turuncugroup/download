@@ -74,15 +74,13 @@
         .btn-reward:hover { background-color: #ca8a04; }
 
         .banner-ad {
-            width: 100%; max-width: 728px; height: 90px; background-color: #1e293b;
-            border: 1px solid #334155; display: flex; align-items: center; justify-content: center;
-            color: #64748b; font-size: 0.85rem; border-radius: 8px; margin: 10px 0; overflow: hidden;
+            width: 100%; max-width: 728px; height: 90px; display: flex; align-items: center;
+            justify-content: center; margin: 10px 0; overflow: hidden;
         }
 
         .side-ad {
-            width: 160px; height: 600px; background-color: #1e293b;
-            border: 1px solid #334155; display: flex; align-items: center; justify-content: center;
-            color: #64748b; font-size: 0.85rem; border-radius: 8px; text-align: center; padding: 10px; overflow: hidden;
+            width: 160px; height: 600px; display: flex; align-items: center;
+            justify-content: center; text-align: center; overflow: hidden;
         }
 
         .hidden { display: none; }
@@ -90,22 +88,26 @@
         @media (max-width: 900px) {
             .side-ad { display: none; }
             .button-group { flex-direction: column; }
-            .banner-ad { height: 60px; font-size: 0.75rem; }
+            .banner-ad { height: 90px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- REKLAM: ÜST BANNER -->
+    <!-- 👑 REKLAM: GERÇEK ÜST BANNER (728x90) -->
     <div class="banner-ad top-ad">
-        <span>SABİT ÜST REKLAM ALANI (Gelecekte AdSense)</span>
+        <script>
+          atOptions = { 'key' : '596329a01dc6bc66fff5c01f4c123aa8', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/596329a01dc6bc66fff5c01f4c123aa8/invoke.js"></script>
     </div>
 
     <div class="main-wrapper">
         
-        <!-- REKLAM: SOL DİKEY -->
+        <!-- REKLAM: SOL DİKEY (160x600) -->
         <div class="side-ad left-ad">
-            <span>SOL DİKEY REKLAM (160x600)</span>
+            <!-- 160x600 Kodunu Aldığınızda Tam Buraya Yapıştırabilirsiniz -->
+            <span style="color:#64748b; font-size:0.85rem;">SOL REKLAM</span>
         </div>
 
         <!-- ANA UYGULAMA PANELİ -->
@@ -134,22 +136,36 @@
             </div>
         </div>
 
-        <!-- REKLAM: SAĞ DİKEY -->
+        <!-- REKLAM: SAĞ DİKEY (160x600) -->
         <div class="side-ad right-ad">
-            <span>SAĞ DİKEY REKLAM (160x600)</span>
+            <!-- 160x600 Kodunu Aldığınızda Tam Buraya Yapıştırabilirsiniz -->
+            <script>
+  atOptions = {
+    'key' : 'e478b5fafdc9ad580ba6a644b19a5db0',
+    'format' : 'iframe',
+    'height' : 600,
+    'width' : 160,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highrevenueformat.com/e478b5fafdc9ad580ba6a644b19a5db0/invoke.js"></script>
+
+            <span style="color:#64748b; font-size:0.85rem;">SAĞ REKLAM</span>
         </div>
 
     </div>
 
-    <!-- REKLAM: ALT BANNER -->
+    <!-- 👑 REKLAM: GERÇEK ALT BANNER (728x90) -->
     <div class="banner-ad bottom-ad">
-        <span>SABİT ALT REKLAM ALANI (Gelecekte AdSense)</span>
+        <script>
+          atOptions = { 'key' : '596329a01dc6bc66fff5c01f4c123aa8', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/596329a01dc6bc66fff5c01f4c123aa8/invoke.js"></script>
     </div>
 
     <script>
         let globalUserLink = "";
 
-        // Link doğrulama ve arayüz açma süreci
         function startDownloadProcess() {
             let link = document.getElementById('videoLink').value.trim();
             let fetchButton = document.getElementById('btnFetch');
@@ -171,19 +187,17 @@
             }, 500);
         }
 
-        // 👑 ÇAKIŞMALARI ÖNLENMİŞ REKLAM VE İNDİRME AKTİVASYONU
         function executeAction(type) {
             if(!globalUserLink) {
                 alert("Lütfen önce bir link çözün!");
                 return;
             }
 
-            // 1. ADIM: Adsterra Reklam ağını temiz bir yeni sekmede güvenle aç (Dolar kazandırır)
+            // Popunder Reklamınızı Yeni Sekmede Tetikler
             window.open("https://profitableratecpmnetwork.com", "_blank");
 
-            // 2. ADIM: Mevcut ana sekmeyi anında engelsiz çalışan gerçek indirme sayfasına dönüştür
-            // Bu sayede tarayıcılar block veya yönlendirme hatası veremez.
-            window.location.href = "https://cobalt.tools/?url=" + encodeURIComponent(globalUserLink);
+            // Ana Sekmeyi İndirme Sunucusuna Çeker
+            window.location.href = "https://cobalt.tools" + encodeURIComponent(globalUserLink);
         }
     </script>
 
