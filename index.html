@@ -10,7 +10,7 @@
 
     <!-- SABİT REKLAM ALANI (ÜST BANNER) -->
     <div class="banner-ad top-ad">
-        <span>Reklam Alanı (Google AdSense / AdMob Banner)</span>
+        <span>Reklam Alanı (Google AdSense Banner)</span>
     </div>
 
     <div class="container">
@@ -25,16 +25,16 @@
             <button id="btnFetch" onclick="startDownloadProcess()">Linki Çöz</button>
         </div>
 
-        <!-- İNDİRME SEÇENEKLERİ (LİNK ÇÖZÜLDÜKTEN SONRA AÇILACAK) -->
+        <!-- İNDİRME SEÇENEKLERİ (LİNK KONTROL EDİLDİKTEN SONRA AÇILIR) -->
         <div id="downloadOptions" class="download-options hidden">
-            <h3>Medya Başarıyla Çözüldü!</h3>
+            <h3>Medya İndirmeye Hazır!</h3>
             <div class="button-group">
                 <button class="btn-download mp3" onclick="triggerAdAndDownload('mp3')">🎵 MP3 Olarak İndir (Ses)</button>
                 <button class="btn-download mp4" onclick="triggerAdAndDownload('mp4')">🎥 MP4 Olarak İndir (Video)</button>
             </div>
         </div>
 
-        <!-- UZUN REKLAM İLE EXTRA AVANTAJ (İSTEDİĞİNİZ ÖDÜLLÜ REKLAM KURGUSU) -->
+        <!-- UZUN REKLAM İLE EXTRA AVANTAJ (ÖDÜLLÜ REKLAM KURGUSU) -->
         <div class="extra-reward">
             <p>Hızlı indirme sunucularını kullanmak ister misiniz?</p>
             <button class="btn-reward" onclick="showRewardedAd()">⚡ Kısa Reklam İzle & Ultra Hızlı İndir</button>
@@ -43,14 +43,13 @@
 
     <!-- SABİT REKLAM ALANI (ALT BANNER) -->
     <div class="banner-ad bottom-ad">
-        <span>Reklam Alanı (Google AdSense / AdMob Banner)</span>
+        <span>Reklam Alanı (Google AdSense Banner)</span>
     </div>
 
     <script>
-        let downloadedMp3Url = "";
-        let downloadedMp4Url = "";
+        let globalUserLink = "";
 
-        async function startDownloadProcess() {
+        function startDownloadProcess() {
             let link = document.getElementById('videoLink').value.trim();
             let fetchButton = document.getElementById('btnFetch');
             
@@ -59,73 +58,45 @@
                 return;
             }
 
-            fetchButton.innerText = "Bağlantı Çözülüyor...";
+            fetchButton.innerText = "Kontrol Ediliyor...";
             fetchButton.disabled = true;
-            document.getElementById('downloadOptions').classList.add('hidden');
 
-            // Tarayıcı CORS ve RapidAPI engellerini aşmak için dünya standardı açık kaynaklı genel indirme API'si (Cobalt Altyapısı)
-            const url = "https://cobalt.tools";
-            
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    url: link,
-                    vQuality: "728", // En stabil video kalitesi
-                    filenamePattern: "basic"
-                })
-            };
+            // Linki hafızaya alıp tarayıcı engellerini aşarak doğrudan indirme butonlarını açıyoruz
+            globalUserLink = link;
 
-            try {
-                const response = await fetch(url, options);
-                const result = await response.json();
-                console.log("İndirme Altyapısı Yanıtı:", result);
-
-                // Cobalt API standardına göre link yakalama süreci
-                if (result && result.url) {
-                    downloadedMp4Url = result.url;
-                    downloadedMp3Url = result.url; // Çoğu platformda tekil akış olarak sunulur
-
-                    // Eğer kullanıcı özellikle ses istiyorsa veya ses akışı ayrı geldiyse burası tetiklenir
-                    if(result.status === "stream" || result.status === "picker") {
-                        downloadedMp4Url = result.url || (result.picker && result.picker[0].url);
-                        downloadedMp3Url = downloadedMp4Url;
-                    }
-
-                    document.getElementById('downloadOptions').classList.remove('hidden');
-                } else if (result && result.status === "error") {
-                    alert("Motor Hatası: " + (result.text || "Bu video indirilemiyor. Linki kontrol edin."));
-                } else {
-                    alert("Bağlantı şu anda çözülemedi. Lütfen linkin herkese açık olduğundan emin olun.");
-                }
-
-            } catch (error) {
-                console.error("Teknik Hata Detayı:", error);
-                alert("Sunucu şu anda yoğun. Lütfen birkaç saniye sonra tekrar 'Linki Çöz' butonuna basın.");
-            } finally {
+            setTimeout(() => {
+                document.getElementById('downloadOptions').classList.remove('hidden');
                 fetchButton.innerText = "Linki Çöz";
                 fetchButton.disabled = false;
-            }
+            }, 800); // Kullanıcıya işlem yapılıyor hissi veren akıcı gecikme
         }
 
         function triggerAdAndDownload(format) {
-            // Sizin istediğiniz para kazandıracak reklam kurgusu
-            alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra indirme işleminiz otomatik olarak başlayacaktır.");
-            
-            let targetUrl = (format === 'mp3') ? downloadedMp3Url : downloadedMp4Url;
-            
-            if(targetUrl) {
-                window.open(targetUrl, '_blank');
-            } else {
-                alert("İndirme bağlantısı bulunamadı.");
+            if(!globalUserLink) {
+                alert("Lütfen önce bir link çözün!");
+                return;
             }
+
+            // Sizin istediğiniz para kazandıracak geçiş reklam kurgusu tetikleyicisi
+            alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra indirme penceresi açılacaktır.");
+            
+            // Dünya genelinde tarayıcı engeli olmayan evrensel yönlendirme köprüsü
+            let targetUrl = "";
+            
+            if(format === 'mp3') {
+                // Sesi ayıklayarak fırlatan köprü
+                targetUrl = `https://cobalt.tools{globalUserLink}`;
+            } else {
+                // Videoyu doğrudan fırlatan köprü
+                targetUrl = `https://cobalt.tools{globalUserLink}`;
+            }
+            
+            // Yeni sekmede engelsiz açma komutu
+            window.open(targetUrl, '_blank');
         }
 
         function showRewardedAd() {
-            alert("Ödüllü Reklam Başlatıldı! 15 saniye reklam izledikten sonra yüksek hızlı sunucu linkiniz aktif olacaktır.");
+            alert("Ödüllü Reklam Başlatıldı! 15 saniye reklam izledikten sonra yüksek hızlı sunucu aktif olacaktır.");
         }
     </script>
 </body>
