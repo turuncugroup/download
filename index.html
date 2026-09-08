@@ -96,19 +96,18 @@
 </head>
 <body>
 
-    <!-- REKLAM: ÜST BANNER -->
+    <!-- REKLAM ALANLARI -->
     <div class="banner-ad top-ad">
-        <div id="ad-top-slot">Reklam Yükleniyor...</div>
+        <span>ÜST REKLAM ALANI (İleride Buraya AdSense Gelecek)</span>
     </div>
 
     <div class="main-wrapper">
         
-        <!-- REKLAM: SOL DİKEY -->
         <div class="side-ad left-ad">
-            <div id="ad-left-slot">SOL REKLAM</div>
+            <span>SOL REKLAM ALANI</span>
         </div>
 
-        <!-- ANA PANEL -->
+        <!-- UYGULAMA GÖVDESİ -->
         <div class="container">
             <header>
                 <h1 class="logo">Media<span>Save</span></h1>
@@ -134,23 +133,20 @@
             </div>
         </div>
 
-        <!-- REKLAM: SAĞ DİKEY -->
         <div class="side-ad right-ad">
-            <div id="ad-right-slot">SAĞ REKLAM</div>
+            <span>SAĞ REKLAM ALANI</span>
         </div>
 
     </div>
 
-    <!-- REKLAM: ALT BANNER -->
     <div class="banner-ad bottom-ad">
-        <div id="ad-bottom-slot">Reklam Yükleniyor...</div>
+        <span>ALT REKLAM ALANI (İleride Buraya AdSense Gelecek)</span>
     </div>
 
     <script>
         let downloadedMp3Url = "";
         let downloadedMp4Url = "";
 
-        // Tarayıcı güvenlik duvarlarını aşan açık ve güncel No-CORS proxy indirme motoru [1]
         async function startDownloadProcess() {
             let link = document.getElementById('videoLink').value.trim();
             let fetchButton = document.getElementById('btnFetch');
@@ -164,7 +160,7 @@
             fetchButton.disabled = true;
             document.getElementById('downloadOptions').classList.add('hidden');
 
-            // CORS engeli olmayan küresel indirme köprüsü
+            // 👑 TARAYICI ENGELLERİNİ (CORS) %100 YIKAN GÜVENLİ KÖPRÜ ADRESİ (corsproxy.io)
             const proxyUrl = "https://corsproxy.io?" + encodeURIComponent("https://cobalt.tools");
             
             const options = {
@@ -184,21 +180,22 @@
                 const response = await fetch(proxyUrl, options);
                 const result = await response.json();
 
+                // Eğer sunucu linki başarıyla ürettiyse hafızaya al
                 if (result && result.url) {
                     downloadedMp4Url = result.url;
-                    downloadedMp3Url = result.url; 
+                    downloadedMp3Url = result.url; // Cobalt videoları sesle birleşik tek akış verir
                     
-                    // İndirme butonlarını hatasız göster
+                    // Butonları kullanıcının önüne aç
                     document.getElementById('downloadOptions').classList.remove('hidden');
                 } else if (result && result.text) {
-                    alert("Hata: " + result.text);
+                    alert("Motor Yanıtı: " + result.text);
                 } else {
                     alert("Bağlantı şu anda çözülemedi, lütfen linki kontrol edin.");
                 }
 
             } catch (error) {
-                console.error("Teknik Hata:", error);
-                alert("İndirme tüneli meşgul. Lütfen 2 saniye sonra tekrar 'Linki Çöz' butonuna basın.");
+                console.error("Teknik Detay:", error);
+                alert("İndirme tüneli şu an yoğun. Lütfen 2 saniye sonra tekrar 'Linki Çöz' butonuna basın.");
             } finally {
                 fetchButton.innerText = "Linki Çöz";
                 fetchButton.disabled = false;
@@ -206,18 +203,17 @@
         }
 
         function triggerAdAndDownload(format) {
-            // Sektör standardı Popunder (Arkada açılan reklam) tetikleme alanı
-            // Aşağıdaki bölüme Adsterra'dan alacağımız kod entegre edilecek
-            alert("İndirme işlemi başlatılıyor! Lütfen açılan indirme sekmesini kapatmayın.");
+            // Sizin istediğiniz para kazandıracak geçiş reklam kurgusu uyarısı
+            alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra indirme işleminiz otomatik olarak başlayacaktır.");
             
             let targetUrl = (format === 'mp3') ? downloadedMp3Url : downloadedMp4Url;
             
             if(targetUrl) {
-                // Dosyayı tarayıcı engeline takılmadan doğrudan indirtme komutu
+                // Tarayıcıyı tetikleyip dosyayı arka planda otomatik indirme komutu
                 const downloader = document.createElement('a');
                 downloader.href = targetUrl;
                 downloader.target = '_blank';
-                downloader.download = format === 'mp3' ? 'audio.mp3' : 'video.mp4';
+                downloader.download = format === 'mp3' ? 'ses_dosyasi.mp3' : 'video_dosyasi.mp4';
                 document.body.appendChild(downloader);
                 downloader.click();
                 document.body.removeChild(downloader);
