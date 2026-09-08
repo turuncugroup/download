@@ -47,25 +47,73 @@
     </div>
 
     <script>
-        // İleride buraya indirme motorunun JavaScript kodlarını yazacağız.
-        function startDownloadProcess() {
+        // Sizin ekran görüntünüzden çıkardığımız gerçek RapidAPI anahtarları entegre edildi
+        const apiKey = "4e0bbdca6amshf08532fa2517b64p114dc8jsnd374839d887a";
+        const apiHost = "://rapidapi.com";
+        
+        let downloadedVideoUrl = "";
+
+        async function startDownloadProcess() {
             let link = document.getElementById('videoLink').value;
+            let fetchButton = document.getElementById('btnFetch');
+            
             if(link.trim() === "") {
-                alert("Lütfen geçerli bir link yapıştırın!");
+                alert("Lütfen geçerli bir bağlantı yapıştırın!");
                 return;
             }
-            // Sahte bir yükleme simülasyonu (Linki çözüyor gibi yapıp seçenekleri açıyoruz)
-            document.getElementById('downloadOptions').classList.remove('hidden');
+
+            // Arayüz geri bildirimi
+            fetchButton.innerText = "Bağlantı Çözülüyor...";
+            fetchButton.disabled = true;
+
+            // API uç noktası (Endpoint) tanımı
+            const url = `https://${apiHost}/app/main.php?url=${encodeURIComponent(link)}`;
+            
+            const options = {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': apiKey,
+                    'x-rapidapi-host': apiHost
+                }
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                
+                // API'den gelen yanıta göre indirme linkini yakalıyoruz
+                if (result && (result.url || result.download_url || result.link)) {
+                    downloadedVideoUrl = result.url || result.download_url || result.link;
+                    
+                    // Gizli olan indirme seçenekleri alanını görünür yapıyoruz
+                    document.getElementById('downloadOptions').classList.remove('hidden');
+                } else {
+                    alert("Video çözülemedi. Lütfen herkese açık geçerli bir video linki girdiğinizden emin olun.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Bağlantı kurulurken teknik bir sorun oluştu. Lütfen tekrar deneyin.");
+            } finally {
+                fetchButton.innerText = "Linki Çöz";
+                fetchButton.disabled = false;
+            }
         }
 
         function triggerAdAndDownload(format) {
-            alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra " + format.toUpperCase() + indirmesi başlayacak.");
-            // Buraya gerçek reklam ve indirme kodları gelecek
+            // İleride buraya gerçek reklam kodları (AdSense/AdMob scriptleri) yerleşecek
+            alert("Geçiş Reklamı Tetiklendi! Reklam bittikten sonra " + format.toUpperCase() + " indirmesi başlayacak.");
+            
+            if(downloadedVideoUrl) {
+                // İndirme linkini yeni sekmede güvenli bir şekilde başlatır
+                window.open(downloadedVideoUrl, '_blank');
+            } else {
+                alert("İndirme bağlantısı bulunamadı, lütfen linki tekrar çözmeyi deneyin.");
+            }
         }
 
         function showRewardedAd() {
             alert("Ödüllü Reklam Başlatıldı! 15 saniye sonra Ultra Hızlı İndirme Modu aktif olacak.");
-            // Buraya ödüllü reklam kodları gelecek
+            // Ödüllü reklam tamamlandığında tetiklenecek fonksiyonlar buraya gelecek
         }
     </script>
 </body>
