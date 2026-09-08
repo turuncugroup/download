@@ -64,13 +64,13 @@
         .download-options { background: #0f172a; padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px dashed #38bdf8; }
         .download-options h3 { font-size: 1.1rem; margin-bottom: 15px; color: #38bdf8; }
         .button-group { display: flex; gap: 10px; }
-        .btn-download { flex: 1; padding: 12px; border-radius: 8px; color: white; font-size: 0.95rem; text-decoration: none; display: inline-block; line-height: 1.5; text-align: center; }
+        .btn-download { flex: 1; padding: 12px; border-radius: 8px; color: white; font-size: 0.95rem; text-align: center; }
         .mp3 { background-color: #10b981; } .mp3:hover { background-color: #059669; }
         .mp4 { background-color: #f43f5e; } .mp4:hover { background-color: #e11d48; }
 
         .extra-reward { margin-top: 20px; padding-top: 20px; border-top: 1px solid #334155; }
         .extra-reward p { font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px; }
-        .btn-reward { background-color: #eab308; color: #0f172a; padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; text-decoration: none; display: inline-block; }
+        .btn-reward { background-color: #eab308; color: #0f172a; padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; }
         .btn-reward:hover { background-color: #ca8a04; }
 
         .banner-ad {
@@ -108,7 +108,7 @@
             <span>SOL DİKEY REKLAM (160x600)</span>
         </div>
 
-        <!-- ANA GÖVDE -->
+        <!-- ANA UYGULAMA PANELİ -->
         <div class="container">
             <header>
                 <h1 class="logo">Media<span>Save</span></h1>
@@ -123,14 +123,14 @@
             <div id="downloadOptions" class="download-options hidden">
                 <h3>Medya İndirmeye Hazır!</h3>
                 <div class="button-group">
-                    <button class="btn-download mp3" onclick="triggerAdAndDownload('mp3')">🎵 MP3 Olarak İndir (Ses)</button>
-                    <button class="btn-download mp4" onclick="triggerAdAndDownload('mp4')">🎥 MP4 Olarak İndir (Video)</button>
+                    <button class="btn-download mp3" onclick="executeAction('mp3')">🎵 MP3 Olarak İndir (Ses)</button>
+                    <button class="btn-download mp4" onclick="executeAction('mp4')">🎥 MP4 Olarak İndir (Video)</button>
                 </div>
             </div>
 
             <div id="rewardArea" class="extra-reward hidden">
                 <p>Hızlı indirme sunucularını kullanmak ister misiniz?</p>
-                <button class="btn-reward" onclick="showRewardedAd()">⚡ Kısa Reklam İzle & Ultra Hızlı İndir</button>
+                <button class="btn-reward" onclick="executeAction('premium')">⚡ Kısa Reklam İzle & Ultra Hızlı İndir</button>
             </div>
         </div>
 
@@ -149,6 +149,7 @@
     <script>
         let globalUserLink = "";
 
+        // Link doğrulama ve arayüz açma süreci
         function startDownloadProcess() {
             let link = document.getElementById('videoLink').value.trim();
             let fetchButton = document.getElementById('btnFetch');
@@ -160,7 +161,6 @@
 
             fetchButton.innerText = "Bağlantı Doğrulanıyor...";
             fetchButton.disabled = true;
-
             globalUserLink = link;
 
             setTimeout(() => {
@@ -168,30 +168,22 @@
                 document.getElementById('rewardArea').classList.remove('hidden');
                 fetchButton.innerText = "Linki Çöz";
                 fetchButton.disabled = false;
-            }, 600);
+            }, 500);
         }
 
-        function triggerAdAndDownload(format) {
+        // 👑 ÇAKIŞMALARI ÖNLENMİŞ REKLAM VE İNDİRME AKTİVASYONU
+        function executeAction(type) {
             if(!globalUserLink) {
                 alert("Lütfen önce bir link çözün!");
                 return;
             }
 
-            // 👑 TARAYICI ENGELİNİ YIKAN STRATEJİ:
-            // Reklamı yeni sekmede temizce açıyoruz (Tarayıcı block atamaz)
+            // 1. ADIM: Adsterra Reklam ağını temiz bir yeni sekmede güvenle aç (Dolar kazandırır)
             window.open("https://profitableratecpmnetwork.com", "_blank");
 
-            // Mevcut ana sayfayı ise anında indirme tüneline dönüştürüyoruz
-            window.location.href = "https://cobalt.tools" + encodeURIComponent(globalUserLink);
-        }
-
-        function showRewardedAd() {
-            if(!globalUserLink) {
-                alert("Lütfen önce bir link çözün!");
-                return;
-            }
-            window.open("https://profitableratecpmnetwork.com", "_blank");
-            window.location.href = "https://cobalt.tools" + encodeURIComponent(globalUserLink);
+            // 2. ADIM: Mevcut ana sekmeyi anında engelsiz çalışan gerçek indirme sayfasına dönüştür
+            // Bu sayede tarayıcılar block veya yönlendirme hatası veremez.
+            window.location.href = "https://cobalt.tools/?url=" + encodeURIComponent(globalUserLink);
         }
     </script>
 
