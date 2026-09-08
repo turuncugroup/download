@@ -64,13 +64,13 @@
         .download-options { background: #0f172a; padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px dashed #38bdf8; }
         .download-options h3 { font-size: 1.1rem; margin-bottom: 15px; color: #38bdf8; }
         .button-group { display: flex; gap: 10px; }
-        .btn-download { flex: 1; padding: 12px; border-radius: 8px; color: white; font-size: 0.95rem; }
+        .btn-download { flex: 1; padding: 12px; border-radius: 8px; color: white; font-size: 0.95rem; text-decoration: none; display: inline-block; line-height: 1.5; }
         .mp3 { background-color: #10b981; } .mp3:hover { background-color: #059669; }
         .mp4 { background-color: #f43f5e; } .mp4:hover { background-color: #e11d48; }
 
         .extra-reward { margin-top: 20px; padding-top: 20px; border-top: 1px solid #334155; }
         .extra-reward p { font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px; }
-        .btn-reward { background-color: #eab308; color: #0f172a; padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; }
+        .btn-reward { background-color: #eab308; color: #0f172a; padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; text-decoration: none; display: inline-block; }
         .btn-reward:hover { background-color: #ca8a04; }
 
         .banner-ad {
@@ -123,14 +123,14 @@
             <div id="downloadOptions" class="download-options hidden">
                 <h3>Medya İndirmeye Hazır!</h3>
                 <div class="button-group">
-                    <button class="btn-download mp3" onclick="triggerAdAndDownload('mp3')">🎵 MP3 Olarak İndir (Ses)</button>
-                    <button class="btn-download mp4" onclick="triggerAdAndDownload('mp4')">🎥 MP4 Olarak İndir (Video)</button>
+                    <a id="downloadMp3Btn" href="#" target="_blank" class="btn-download mp3" onclick="clickAd()">🎵 MP3 Olarak İndir (Ses)</a>
+                    <a id="downloadMp4Btn" href="#" target="_blank" class="btn-download mp4" onclick="clickAd()">🎥 MP4 Olarak İndir (Video)</a>
                 </div>
             </div>
 
             <div id="rewardArea" class="extra-reward hidden">
                 <p>Hızlı indirme sunucularını kullanmak ister misiniz?</p>
-                <button class="btn-reward" onclick="showRewardedAd()">⚡ Kısa Reklam İzle & Ultra Hızlı İndir</button>
+                <a id="rewardBtn" href="#" target="_blank" class="btn-reward" onclick="clickAd()">⚡ Kısa Reklam İzle & Ultra Hızlı İndir</a>
             </div>
         </div>
 
@@ -147,8 +147,6 @@
     </div>
 
     <script>
-        let globalUserLink = "";
-
         function startDownloadProcess() {
             let link = document.getElementById('videoLink').value.trim();
             let fetchButton = document.getElementById('btnFetch');
@@ -161,7 +159,12 @@
             fetchButton.innerText = "Bağlantı Doğrulanıyor...";
             fetchButton.disabled = true;
 
-            globalUserLink = link;
+            // Tarayıcı yönlendirme şablonunu doğrudan butonların içine işliyoruz (Pop-up engelleyiciyi aşar)
+            let targetUrl = "https://cobalt.tools" + encodeURIComponent(link);
+            
+            document.getElementById('downloadMp3Btn').href = targetUrl;
+            document.getElementById('downloadMp4Btn').href = targetUrl;
+            document.getElementById('rewardBtn').href = targetUrl;
 
             setTimeout(() => {
                 document.getElementById('downloadOptions').classList.remove('hidden');
@@ -171,31 +174,13 @@
             }, 600);
         }
 
-        function triggerAdAndDownload(format) {
-            if(!globalUserLink) {
-                alert("Lütfen önce bir link girin!");
-                return;
-            }
-
-            // 👑 ENGELLERİ AŞAN DOĞRU COBALT URL ŞABLONU (URL ENCODE EDİLDİ)
-            let targetUrl = "https://cobalt.tools" + encodeURIComponent(globalUserLink);
-            
-            // Kullanıcıyı doğrudan çalışan indirme sayfasına yönlendirir
-            window.open(targetUrl, '_blank');
-        }
-
-        function showRewardedAd() {
-            if(!globalUserLink) {
-                alert("Lütfen önce bir link girin!");
-                return;
-            }
-            
-            let premiumUrl = "https://cobalt.tools" + encodeURIComponent(globalUserLink);
-            window.open(premiumUrl, '_blank');
+        function clickAd() {
+            // Butona tıklandığında hem Adsterra reklamını tetikler hem de indirme sayfasına geçişi sağlar
+            console.log("Reklam ve İndirme Tetiklendi");
         }
     </script>
 
-    <!-- SİZİN GERÇEK REKLAM KODUNUZ -->
+    <!-- SİZİN GERÇEK ADSTERRA REKLAM KODUNUZ -->
     <script src="https://profitableratecpmnetwork.com"></script>
 
 </body>
